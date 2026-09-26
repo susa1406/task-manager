@@ -35,7 +35,7 @@
 
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; scroll-behavior: smooth; }
+html { font-size: 16px; scroll-behavior: smooth; overflow-x: hidden; }
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg-primary);
@@ -43,6 +43,8 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  width: 100%;
 }
 button { cursor: pointer; font-family: inherit; }
 input, textarea, select { font-family: inherit; }
@@ -61,6 +63,8 @@ img { max-width: 100%; }
 .app-layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* ========================
@@ -193,9 +197,12 @@ img { max-width: 100%; }
   margin-left: var(--sidebar-width);
   flex: 1;
   padding: 24px;
-  max-width: 100%;
+  width: calc(100% - var(--sidebar-width));
+  max-width: calc(100% - var(--sidebar-width));
   min-height: 100vh;
   background: var(--bg-primary);
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* ========================
@@ -270,6 +277,7 @@ img { max-width: 100%; }
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
+  width: 100%;
 }
 
 .stat-card {
@@ -280,6 +288,8 @@ img { max-width: 100%; }
   transition: all var(--transition);
   position: relative;
   overflow: hidden;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .stat-card::before {
@@ -1342,7 +1352,7 @@ img { max-width: 100%; }
    RESPONSIVE
    ======================== */
 
-/* Tablet */
+/* Tablet — 1024px */
 @media (max-width: 1024px) {
   .stat-cards-grid { grid-template-columns: repeat(2, 1fr); }
   .dashboard-grid { grid-template-columns: 1fr; }
@@ -1354,46 +1364,76 @@ img { max-width: 100%; }
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
 
+  /* Full width, below topbar */
   .main-content {
-    margin-left: 0;
-    padding: 16px;
-    padding-top: calc(var(--topbar-height) + 16px);
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+    padding-top: calc(var(--topbar-height) + 12px) !important;
+    overflow-x: hidden;
   }
 
   .topbar { display: flex; }
 
-  .stat-cards-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .stat-card { padding: 14px; }
-  .stat-card-value { font-size: 18px; }
+  /* 2×2 grid for stat cards — never overflow */
+  .stat-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+  .stat-card {
+    padding: 12px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .stat-card-value { font-size: 16px; }
+  .stat-card-label { font-size: 10px; }
+  .stat-card-sub { font-size: 11px; }
 
-  .dashboard-grid { grid-template-columns: 1fr; gap: 14px; }
+  /* Dashboard stacks */
+  .dashboard-grid { grid-template-columns: 1fr !important; gap: 12px; }
   .dashboard-chart-card { padding: 14px; }
 
-  .chart-area { flex-direction: column; align-items: center; }
+  /* Chart stacks */
+  .chart-area { flex-direction: column !important; align-items: center; }
   .chart-legend { width: 100%; max-height: none; }
 
-  .summary-cards { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .summary-card { padding: 12px 14px; }
-  .summary-card-value { font-size: 18px; }
+  /* Summary 2 col */
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+  }
+  .summary-card { padding: 12px; min-width: 0; }
+  .summary-card-value { font-size: 16px; }
 
-  .goals-grid { grid-template-columns: 1fr; }
-  .notes-grid { grid-template-columns: 1fr; }
+  /* Goals & Notes single col */
+  .goals-grid { grid-template-columns: 1fr !important; }
+  .notes-grid { grid-template-columns: 1fr !important; }
 
-  .goal-card-actions { opacity: 1; }
-  .note-card-actions { opacity: 1; }
+  /* Always show action buttons */
+  .goal-card-actions { opacity: 1 !important; }
+  .note-card-actions { opacity: 1 !important; }
 
-  .form-row { grid-template-columns: 1fr; gap: 12px; }
+  /* Forms stack */
+  .form-row { grid-template-columns: 1fr !important; gap: 10px; }
 
-  .page-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+  /* Page actions full width */
+  .page-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px;
+  }
   .page-actions > .btn { width: 100%; justify-content: center; }
 
-  .filters-bar { flex-direction: column; gap: 10px; }
-  .search-input-wrapper { max-width: 100% !important; }
+  /* Filters stack */
+  .filters-bar { flex-direction: column !important; gap: 8px; }
+  .search-input-wrapper { max-width: 100% !important; width: 100% !important; }
 
+  /* Filter chips scroll horizontal */
   .filters-bar > div {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
     gap: 6px;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
@@ -1401,48 +1441,64 @@ img { max-width: 100%; }
     width: 100%;
   }
   .filters-bar > div::-webkit-scrollbar { display: none; }
+  .filter-chip { flex-shrink: 0; }
 
-  .table { min-width: 520px; }
-  .table th, .table td { padding: 10px 12px; font-size: 12px; }
+  /* Table scrolls inside wrapper */
+  .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table { min-width: 480px; }
+  .table th, .table td { padding: 9px 10px; font-size: 12px; }
 
-  .timeline-date { font-size: 11px; min-width: 48px; }
-  .timeline-content { padding: 12px; }
+  /* Timeline compact */
+  .timeline-date { font-size: 11px; min-width: 46px; }
+  .timeline-content { padding: 10px 12px; min-width: 0; }
+  .timeline-title { font-size: 13px; }
 
-  .modal-overlay { padding: 0; align-items: flex-end; }
+  /* Modal slides up from bottom */
+  .modal-overlay { padding: 0 !important; align-items: flex-end !important; }
   .modal {
-    max-width: 100%;
+    max-width: 100% !important;
+    width: 100% !important;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     max-height: 92vh;
   }
 
-  .greeting-text { font-size: 18px; }
+  /* Typography */
+  .greeting-text { font-size: 17px; }
   .greeting-date { font-size: 12px; }
-  .page-title { font-size: 18px; }
+  .page-title { font-size: 17px; }
 
+  /* Settings */
   .settings-row { flex-wrap: wrap; }
   .settings-row > .btn { width: 100%; justify-content: center; }
+
+  /* Activity */
+  .activity-item { gap: 8px; }
+  .activity-icon { width: 30px; height: 30px; flex-shrink: 0; }
+  .activity-title { font-size: 12px; }
+  .activity-sub { font-size: 11px; }
 }
 
-/* Small mobile — 480px and below */
+/* Small phones — 480px */
 @media (max-width: 480px) {
-  .main-content { padding: 12px; padding-top: calc(var(--topbar-height) + 12px); }
+  .main-content { padding: 10px !important; padding-top: calc(var(--topbar-height) + 10px) !important; }
 
-  .stat-cards-grid { grid-template-columns: 1fr; gap: 8px; }
-  .summary-cards { grid-template-columns: 1fr; gap: 8px; }
+  /* Stat cards still 2 col even on very small */
+  .stat-cards-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+  .stat-card { padding: 10px; }
+  .stat-card-value { font-size: 14px; }
 
+  /* Summary still 2 col */
+  .summary-cards { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+  .summary-card-value { font-size: 15px; }
+
+  /* Login */
   .login-card { padding: 24px 16px; }
   .login-title { font-size: 22px; }
 
-  .chart-area > div:first-child { width: 150px !important; height: 150px !important; }
-
-  .activity-item { gap: 8px; }
-  .activity-icon { width: 28px; height: 28px; }
-  .activity-title { font-size: 12px; }
-  .activity-sub { font-size: 11px; }
-
-  .note-card { padding: 12px; }
-  .goal-card { padding: 12px; }
-  .goal-card-title { font-size: 14px; }
+  /* Smaller cards */
+  .note-card { padding: 11px; }
+  .goal-card { padding: 11px; }
+  .goal-card-title { font-size: 13px; }
 }
 
 /* ========================
